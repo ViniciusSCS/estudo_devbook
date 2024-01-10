@@ -32,6 +32,8 @@ func GerarKeys() error {
 		if err := writeEnvVariable("HASH_KEY", hashKey); err != nil {
 			return fmt.Errorf("Erro ao escrever no arquivo .env: %v", err)
 		}
+	} else {
+		fmt.Printf("HASH_KEY já está definida como %s. Não será gerada novamente.\n", hashKey)
 	}
 
 	// Verifica e gera a variável de ambiente BLOCK_KEY se necessário
@@ -49,6 +51,8 @@ func GerarKeys() error {
 		if err := writeEnvVariable("BLOCK_KEY", blockKey); err != nil {
 			return fmt.Errorf("Erro ao escrever no arquivo .env: %v", err)
 		}
+	} else {
+		fmt.Printf("BLOCK_KEY já está definida como %s. Não será gerada novamente.\n", blockKey)
 	}
 
 	return nil
