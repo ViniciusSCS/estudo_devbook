@@ -1,4 +1,4 @@
-package main
+package gerakey
 
 import (
 	"bufio"
@@ -99,7 +99,7 @@ func splitEnv(env string) []string {
 	return strings.SplitN(env, "=", 2)
 }
 
-func main() {
+func Gerakey() {
 	app := cli.NewApp()
 	app.Name = "Gerador de SECRET_KEY"
 	app.Usage = "Gera uma SECRET_KEY em base64 e a salva ou atualiza no arquivo .env"
@@ -112,7 +112,7 @@ func main() {
 		{
 			Name:   "generate",
 			Usage:  "Gera e salva ou atualiza a SECRET_KEY",
-			Action: GenerateOrUpdateSecretKey(envWriter, envReader),
+			Action: generateOrUpdateSecretKey(envWriter, envReader),
 		},
 	}
 
@@ -123,7 +123,7 @@ func main() {
 }
 
 // GenerateOrUpdateSecretKey é uma função que encapsula a lógica para gerar e adicionar ou atualizar a SECRET_KEY ao .env.
-func GenerateOrUpdateSecretKey(writer EnvFileWriter, reader EnvFileReader) cli.ActionFunc {
+func generateOrUpdateSecretKey(writer EnvFileWriter, reader EnvFileReader) cli.ActionFunc {
 	return func(c *cli.Context) error {
 		// Gera uma chave aleatória
 		secretKey, err := generateRandomKey()
@@ -135,7 +135,7 @@ func GenerateOrUpdateSecretKey(writer EnvFileWriter, reader EnvFileReader) cli.A
 		encodedKey := encodeToString(secretKey)
 
 		// Verifica se a chave já existe no .env
-		currentKey, err := reader.ReadEnvFile("../../.env", "SECRET_KEY")
+		currentKey, err := reader.ReadEnvFile(".env", "SECRET_KEY")
 		if err != nil {
 			return err
 		}
@@ -143,14 +143,14 @@ func GenerateOrUpdateSecretKey(writer EnvFileWriter, reader EnvFileReader) cli.A
 		// Se a chave já existir, atualiza o valor
 		if currentKey != "" {
 			// Atualiza a chave no arquivo .env
-			err := writer.WriteToEnvFile("../../.env", "SECRET_KEY", `"`+encodedKey+`"`)
+			err := writer.WriteToEnvFile(".env", "SECRET_KEY", `"`+encodedKey+`"`)
 			if err != nil {
 				return err
 			}
 			fmt.Println("SECRET_KEY atualizada com sucesso no arquivo .env!")
 		} else {
 			// Se a chave não existir, adiciona ao arquivo .env
-			err := writer.WriteToEnvFile("../../.env", "SECRET_KEY", encodedKey)
+			err := writer.WriteToEnvFile(".env", "SECRET_KEY", `"`+encodedKey+`"`)
 			if err != nil {
 				return err
 			}

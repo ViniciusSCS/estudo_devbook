@@ -6,22 +6,21 @@ import (
 	"net/http"
 	"webapp/src/config"
 	"webapp/src/cookies"
+	"webapp/src/generatekey"
 	"webapp/src/router"
 	"webapp/src/utils"
 )
-
-// func init() {
-// 	hashkey := hex.EncodeToString(securecookie.GenerateRandomKey(16))
-// 	fmt.Println(hashkey)
-
-// 	blockKey := hex.EncodeToString(securecookie.GenerateRandomKey(16))
-// 	fmt.Println(blockKey)
-// }
 
 func main() {
 	config.Carregar()
 	cookies.Configurar()
 	utils.CarregarTemplates()
+
+	// Verifica e gera as variáveis de ambiente HASH_KEY e BLOCK_KEY se necessário
+	if err := generatekey.GerarKeys(); err != nil {
+		log.Fatalf("Erro ao gerar chaves: %v", err)
+	}
+
 	r := router.Gerar()
 
 	fmt.Printf("Escutando na porta %d\n", config.Porta)
